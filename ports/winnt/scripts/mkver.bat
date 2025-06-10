@@ -21,6 +21,8 @@ see notes/remarks directly below this header:
 #
 # Changes:
 #
+# 06/10/2025	Lukas Grützmacher
+#				- Add support for build from git repository
 # 04/01/2023	Dave Hart
 #				- Use fast 'bk root' to check for BitKeeper
 #				  instead of invocation that gets ChangeSet.
