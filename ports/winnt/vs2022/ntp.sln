@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 12.0.31101.0
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ntpd", "ntpd\ntpd.vcxproj", "{CB61F8BF-9637-495C-9087-E8664B400CE0}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "keyword-gen", "ntpd-keyword-gen\ntpd-keyword-gen.vcxproj", "{1B814CC1-EAD4-4A13-B29C-A67B23C9845A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "loopback-ppsapi-provider", "loopback-pps\loopback-ppsapi-provider.vcxproj", "{1ACE209D-D56E-450B-8711-B73E4ACFC38E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libntpq", "libntpq\libntpq.vcxproj", "{2CD10913-51C8-4382-88F6-11567B29D6F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,14 @@ Global
 		{1ACE209D-D56E-450B-8711-B73E4ACFC38E}.Release|Win32.Build.0 = Release|Win32
 		{1ACE209D-D56E-450B-8711-B73E4ACFC38E}.Release|x64.ActiveCfg = Release|x64
 		{1ACE209D-D56E-450B-8711-B73E4ACFC38E}.Release|x64.Build.0 = Release|x64
+		{2CD10913-51C8-4382-88F6-11567B29D6F9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2CD10913-51C8-4382-88F6-11567B29D6F9}.Debug|Win32.Build.0 = Debug|Win32
+		{2CD10913-51C8-4382-88F6-11567B29D6F9}.Debug|x64.ActiveCfg = Debug|x64
+		{2CD10913-51C8-4382-88F6-11567B29D6F9}.Debug|x64.Build.0 = Debug|x64
+		{2CD10913-51C8-4382-88F6-11567B29D6F9}.Release|Win32.ActiveCfg = Release|Win32
+		{2CD10913-51C8-4382-88F6-11567B29D6F9}.Release|Win32.Build.0 = Release|Win32
+		{2CD10913-51C8-4382-88F6-11567B29D6F9}.Release|x64.ActiveCfg = Release|x64
+		{2CD10913-51C8-4382-88F6-11567B29D6F9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

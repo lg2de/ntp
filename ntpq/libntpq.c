@@ -2,10 +2,10 @@
  *
  *  libntpq.c
  *
- *  This is the wrapper library for ntpq, the NTP query utility. 
+ *  This is the wrapper library for ntpq, the NTP query utility.
  *  This library reuses the sourcecode from ntpq and exports a number
  *  of useful functions in a library that can be linked against applications
- *  that need to query the status of a running ntpd. The whole 
+ *  that need to query the status of a running ntpd. The whole
  *  communcation is based on mode 6 packets.
  *
  ****************************************************************************/
@@ -17,7 +17,7 @@
 #include "libntpq.h"
 
 /* Function Prototypes */
- 
+
 
 const char *Version = "libntpq 0.3beta";
 
@@ -39,9 +39,9 @@ struct ntpq_varlist ntpq_varlist[MAXLIST];
  *  ntpq_stripquotes
  *
  *  Parses a given character buffer srcbuf and removes all quoted
- *  characters. The resulting string is copied to the specified 
+ *  characters. The resulting string is copied to the specified
  *  resultbuf character buffer.  E.g. \" will be translated into "
- * 
+ *
  ****************************************************************************
  * Parameters:
  *	resultbuf	char*	The resulting string without quoted
@@ -51,8 +51,8 @@ struct ntpq_varlist ntpq_varlist[MAXLIST];
  *	maxlen		int	Max. number of bytes for resultbuf
  *
  * Returns:
- *	int		number of chars that have been copied to 
- *			resultbuf 
+ *	int		number of chars that have been copied to
+ *			resultbuf
  ****************************************************************************/
 
 int ntpq_stripquotes ( char *resultbuf, char *srcbuf, int datalen, int maxlen )
@@ -60,13 +60,13 @@ int ntpq_stripquotes ( char *resultbuf, char *srcbuf, int datalen, int maxlen )
 	char* dst = resultbuf;
 	char* dep = resultbuf + maxlen - 1;
 	char* src = srcbuf;
-	char* sep = srcbuf + (datalen >= 0 ? datalen : 0); 
+	char* sep = srcbuf + (datalen >= 0 ? datalen : 0);
 	int   esc = 0;
 	int   ch;
-	
+
 	if (maxlen <= 0)
 		return 0;
-	
+
 	while ((dst != dep) && (src != sep) && (ch = (u_char)*src++) != 0) {
 		if (esc) {
 			esc = 0;
@@ -95,7 +95,7 @@ int ntpq_stripquotes ( char *resultbuf, char *srcbuf, int datalen, int maxlen )
 	}
 	*dst = '\0';
 	return (int)(dst - resultbuf);
-}			
+}
 
 
 /*****************************************************************************
@@ -113,15 +113,15 @@ int ntpq_stripquotes ( char *resultbuf, char *srcbuf, int datalen, int maxlen )
  * Parameters:
  *	resultbuf	char*	The resulting string without quoted
  *				characters
- *	datalen		size_t	The number of bytes stored in 
+ *	datalen		size_t	The number of bytes stored in
  *							resultbuf
- *	varname		char*	Name of the required variable 
+ *	varname		char*	Name of the required variable
  *	varvalue	char*	Where the value of the variable should
  *							be stored
  *	maxlen		size_t	Max. number of bytes for varvalue
  *
  * Returns:
- *	size_t		number of chars that have been copied to 
+ *	size_t		number of chars that have been copied to
  *			varvalue
  ****************************************************************************/
 
@@ -156,9 +156,9 @@ ntpq_getvar(
  *
  *  ntpq_queryhost
  *
- *  Sends a mode 6 query packet to the current open host (see 
+ *  Sends a mode 6 query packet to the current open host (see
  *  ntpq_openhost) and stores the requested variable set in the specified
- *  character buffer. 
+ *  character buffer.
  *  It returns the number of bytes read or zero for an empty result
  *  (=no answer or empty value)
  *
@@ -173,7 +173,7 @@ ntpq_getvar(
  *	maxlen		int	Max. number of bytes for varvalue
  *
  * Returns:
- *	int		number of bytes that have been copied to 
+ *	int		number of bytes that have been copied to
  *			resultbuf
  *  			- OR -
  *			0 (zero) if no reply has been received or
@@ -186,22 +186,22 @@ int ntpq_queryhost(unsigned short VARSET, unsigned short association, char *resu
 	int res;
 	size_t	dsize;
 	u_short	rstatus;
-	
+
 	if ( numhosts > 0 )
 		res = doquery(VARSET,association,0,0, (char *)0, &rstatus, &dsize, &datap);
 	else
 		return 0;
-	
+
 	if ( ( res != 0) || ( dsize == 0 ) ) /* no data */
 		return 0;
-	
-	if ( dsize > maxlen) 
+
+	if ( dsize > maxlen)
 		dsize = maxlen;
-	
-	
+
+
 	/* fill result resultbuf */
 	memcpy(resultbuf, datap, dsize);
-	
+
 	return dsize;
 }
 
@@ -221,14 +221,14 @@ int ntpq_queryhost(unsigned short VARSET, unsigned short association, char *resu
  *	fam		int	Address Family (AF_INET, AF_INET6, or 0)
  *
  * Returns:
- *	int		1 if the host connection could be set up, i.e. 
+ *	int		1 if the host connection could be set up, i.e.
  *			name resolution was succesful and/or IP address
  *			has been validated
  *  			- OR -
  *			0 (zero) if a failure occured
  ****************************************************************************/
 
-int
+ISC_DLLEXP int
 ntpq_openhost(
 	char *hostname,
 	int fam
@@ -240,9 +240,9 @@ ntpq_openhost(
 	} else {
 		numhosts = 0;
 	}
-	
+
 	return numhosts;
-	
+
 }
 
 
@@ -267,7 +267,7 @@ int ntpq_closehost(void)
 {
 	if ( numhosts )
 	 return closesocket(sockfd);
-	
+
 	return 0;
 }
 
@@ -276,16 +276,16 @@ int ntpq_closehost(void)
  *
  *  ntpq_read_associations
  *
- *  This function queries the ntp host for its associations and returns the 
+ *  This function queries the ntp host for its associations and returns the
  *  number of associations found.
  *
- *  It takes an u_short array as its first parameter, this array holds the 
- *  IDs of the associations, 
- *  the function will not write more entries than specified with the 
+ *  It takes an u_short array as its first parameter, this array holds the
+ *  IDs of the associations,
+ *  the function will not write more entries than specified with the
  *  max_entries parameter.
  *
- *  However, if more than max_entries associations were found, the return 
- *  value of this function will reflect the real number, even if not all 
+ *  However, if more than max_entries associations were found, the return
+ *  value of this function will reflect the real number, even if not all
  *  associations have been stored in the array.
  *
  ****************************************************************************
@@ -301,13 +301,13 @@ int ntpq_closehost(void)
  *			0 (zero) if a failure occured or no association has
  *			been returned.
  ****************************************************************************/
- 
+
  int  ntpq_read_associations ( u_short resultbuf[], int max_entries )
 {
     int i = 0;
 
-    if (ntpq_dogetassoc()) {       
-        
+    if (ntpq_dogetassoc()) {
+
         if(numassoc < max_entries)
           max_entries = numassoc;
 
@@ -327,11 +327,11 @@ int ntpq_closehost(void)
  *
  *  ntpq_get_assocs
  *
- *  This function reads the associations of a previously selected (with 
- *  ntpq_openhost) NTP host into its own (global) array and returns the 
- *  number of associations found. 
+ *  This function reads the associations of a previously selected (with
+ *  ntpq_openhost) NTP host into its own (global) array and returns the
+ *  number of associations found.
  *
- *  The obtained association IDs can be read by using the ntpq_get_assoc_id 
+ *  The obtained association IDs can be read by using the ntpq_get_assoc_id
  *  function.
  *
  ****************************************************************************
@@ -344,7 +344,7 @@ int ntpq_closehost(void)
  *			0 (zero) if a failure occured or no association has
  *			been returned.
  ****************************************************************************/
- 
+
  int  ntpq_get_assocs ( void )
 {
     return ntpq_read_associations( ntpq_associations, MAXASSOC );
@@ -352,25 +352,25 @@ int ntpq_closehost(void)
 
 
 /*****************************************************************************
- *  
+ *
  *  ntpq_get_assoc_number
  *
- *  This function returns for a given Association ID the association number 
- *  in the internal association array, which is filled by the ntpq_get_assocs 
+ *  This function returns for a given Association ID the association number
+ *  in the internal association array, which is filled by the ntpq_get_assocs
  *  function.
- * 
+ *
  ****************************************************************************
  * Parameters:
- *	associd		int	requested associaton ID 
+ *	associd		int	requested associaton ID
  *
  * Returns:
  *	int		the number of the association array element that is
  *			representing the given association ID
  *  			- OR -
- *			-1 if a failure occured or no matching association 
+ *			-1 if a failure occured or no matching association
  * 			ID has been found
  ****************************************************************************/
- 
+
 int ntpq_get_assoc_number ( associd_t associd )
 {
 	int i;
@@ -386,28 +386,28 @@ int ntpq_get_assoc_number ( associd_t associd )
 
 
 /*****************************************************************************
- *  
+ *
  *  ntpq_read_assoc_peervars
  *
- *  This function reads the peervars variable-set of a specified association 
- *  from a NTP host and writes it to the result buffer specified, honoring 
+ *  This function reads the peervars variable-set of a specified association
+ *  from a NTP host and writes it to the result buffer specified, honoring
  *  the maxsize limit.
  *
- *  It returns the number of bytes written or 0 when the variable-set is 
+ *  It returns the number of bytes written or 0 when the variable-set is
  *  empty or failed to read.
- *  
+ *
  ****************************************************************************
  * Parameters:
- *	associd		int	requested associaton ID 
+ *	associd		int	requested associaton ID
  *	resultbuf	char*	character buffer where the variable set
  *				should be stored
  *	maxsize		int	the maximum number of bytes that can be
  *				written to resultbuf
  *
  * Returns:
- *	int		number of chars that have been copied to 
+ *	int		number of chars that have been copied to
  *			resultbuf
- *			- OR - 
+ *			- OR -
  *			0 (zero) if an error occured
  ****************************************************************************/
 
@@ -436,7 +436,7 @@ ntpq_read_assoc_peervars(
 
 		return 0;
 	}
-	if (dsize > maxsize) 
+	if (dsize > maxsize)
 		dsize = maxsize;
 	memcpy(resultbuf, datap, dsize);
 
@@ -447,7 +447,7 @@ ntpq_read_assoc_peervars(
 
 
 /*****************************************************************************
- *  
+ *
  *  ntpq_read_sysvars
  *
  *  This function reads the sysvars variable-set from a NTP host and writes it
@@ -455,7 +455,7 @@ ntpq_read_assoc_peervars(
  *
  *  It returns the number of bytes written or 0 when the variable-set is empty
  *  or could not be read.
- *  
+ *
  ****************************************************************************
  * Parameters:
  *	resultbuf	char*	character buffer where the variable set
@@ -464,9 +464,9 @@ ntpq_read_assoc_peervars(
  *				written to resultbuf
  *
  * Returns:
- *	int		number of chars that have been copied to 
+ *	int		number of chars that have been copied to
  *			resultbuf
- *			- OR - 
+ *			- OR -
  *			0 (zero) if an error occured
  ****************************************************************************/
 size_t
@@ -508,20 +508,20 @@ ntpq_read_sysvars(
  *  ID can be requested from a NTP host. They are stored internally and can be
  *  read by using the ntpq_get_peervar or ntpq_get_clockvar functions.
  *
- *  Basically this is only a combination of the ntpq_get_assoc_peervars and 
+ *  Basically this is only a combination of the ntpq_get_assoc_peervars and
  *  ntpq_get_assoc_clockvars functions.
  *
- *  It returns 1 if both variable-sets (peervars and clockvars) were 
- *  received successfully. If one variable-set or both of them weren't 
+ *  It returns 1 if both variable-sets (peervars and clockvars) were
+ *  received successfully. If one variable-set or both of them weren't
  *  received,
  *
  ****************************************************************************
  * Parameters:
- *	associd		int	requested associaton ID 
+ *	associd		int	requested associaton ID
  *
  * Returns:
  *	int		nonzero if at least one variable set could be read
- * 			- OR - 
+ * 			- OR -
  *			0 (zero) if an error occured and both variable sets
  *			could not be read
  ****************************************************************************/
@@ -547,7 +547,7 @@ ntpq_read_sysvars(
  *
  * Returns:
  *	int		nonzero if the variable set could be read
- * 			- OR - 
+ * 			- OR -
  *			0 (zero) if an error occured and the sysvars
  *			could not be read
  ****************************************************************************/
@@ -563,14 +563,14 @@ ntpq_get_sysvars(void)
 
 
 /*****************************************************************************
- *  
+ *
  *  ntp_get_peervar
  *
- *  This function uses the variable-set which was read by using 
- *  ntp_get_peervars and searches for a variable specified with varname. If 
+ *  This function uses the variable-set which was read by using
+ *  ntp_get_peervars and searches for a variable specified with varname. If
  *  such a variable exists, it writes its value into
  *  varvalue (maxlen specifies the size of this target buffer).
- *  
+ *
  ****************************************************************************
  * Parameters:
  *	varname		char*	requested variable name
@@ -580,8 +580,8 @@ ntpq_get_sysvars(void)
  *
  * Returns:
  *	int		number of bytes copied to varvalue
- * 			- OR - 
- *			0 (zero) if an error occured or the variable could 
+ * 			- OR -
+ *			0 (zero) if an error occured or the variable could
  *			not be found
  ****************************************************************************/
 int ntpq_get_peervar( const char *varname, char *varvalue, int maxlen)
@@ -592,20 +592,20 @@ int ntpq_get_peervar( const char *varname, char *varvalue, int maxlen)
 
 
 /*****************************************************************************
- *  
+ *
  *  ntpq_get_assoc_peervars
  *
- *  This function requests the peer variables of the specified association 
- *  from a NTP host. In order to access the variable values, the function 
+ *  This function requests the peer variables of the specified association
+ *  from a NTP host. In order to access the variable values, the function
  *  ntpq_get_peervar must be used.
  *
  ****************************************************************************
  * Parameters:
- *	associd		int	requested associaton ID 
+ *	associd		int	requested associaton ID
  *
  * Returns:
  *	int		1 (one) if the peervars have been read
- * 			- OR - 
+ * 			- OR -
  *			0 (zero) if an error occured and the variable set
  *			could not be read
  ****************************************************************************/
@@ -614,7 +614,7 @@ ntpq_get_assoc_peervars(
 	associd_t associd
 	)
 {
-	peervarlen = ntpq_read_assoc_peervars(associd, peervars, 
+	peervarlen = ntpq_read_assoc_peervars(associd, peervars,
 					      sizeof(peervars));
 	if (peervarlen <= 0) {
 		peervar_assoc = 0;
@@ -628,28 +628,28 @@ ntpq_get_assoc_peervars(
 
 
 /*****************************************************************************
- *  
+ *
  *  ntp_read_assoc_clockvars
  *
  *  This function reads the clockvars variable-set of a specified association
- *  from a NTP host and writes it to the result buffer specified, honoring 
+ *  from a NTP host and writes it to the result buffer specified, honoring
  *  the maxsize limit.
  *
- *  It returns the number of bytes written or 0 when the variable-set is 
+ *  It returns the number of bytes written or 0 when the variable-set is
  *  empty or failed to read.
- *  
+ *
  ****************************************************************************
  * Parameters:
- *	associd		int	requested associaton ID 
+ *	associd		int	requested associaton ID
  *	resultbuf	char*	character buffer where the variable set
  *				should be stored
  *	maxsize		int	the maximum number of bytes that can be
  *				written to resultbuf
  *
  * Returns:
- *	int		number of chars that have been copied to 
+ *	int		number of chars that have been copied to
  *			resultbuf
- *			- OR - 
+ *			- OR -
  *			0 (zero) if an error occured
  ****************************************************************************/
 
@@ -674,7 +674,7 @@ ntpq_read_assoc_clockvars(
 		if (numhosts > 1) /* no information returned from server */
 			return 0;
 	} else {
-		if (dsize > maxsize) 
+		if (dsize > maxsize)
 			dsize = maxsize;
 		memcpy(resultbuf, datap, dsize);
 	}
@@ -685,10 +685,10 @@ ntpq_read_assoc_clockvars(
 
 
 /*****************************************************************************
- *  
+ *
  *  ntpq_get_assoc_clocktype
  *
- *  This function returns a clocktype value for a given association number 
+ *  This function returns a clocktype value for a given association number
  *  (not ID!):
  *
  *  NTP_CLOCKTYPE_UNKNOWN   Unknown clock type
@@ -696,7 +696,7 @@ ntpq_read_assoc_clockvars(
  *  NTP_CLOCKTYPE_LOCAL     Local clock
  *  NTP_CLOCKTYPE_UNICAST   Unicast server
  *  NTP_CLOCKTYPE_MULTICAST Multicast server
- * 
+ *
  ****************************************************************************/
 int
 ntpq_get_assoc_clocktype(
@@ -734,22 +734,22 @@ ntpq_get_assoc_clocktype(
 
 
 /*****************************************************************************
- *  
+ *
  *  ntpq_get_assoc_clockvars
  *
- *  With this function the clock variables of the specified association are 
- *  requested from a NTP host. This makes only sense for associations with 
- *  the type 'l' (Local Clock) and you should check this with 
+ *  With this function the clock variables of the specified association are
+ *  requested from a NTP host. This makes only sense for associations with
+ *  the type 'l' (Local Clock) and you should check this with
  *  ntpq_get_assoc_clocktype for each association, before you use this function
  *  on it.
  *
  ****************************************************************************
  * Parameters:
- *	associd		int	requested associaton ID 
+ *	associd		int	requested associaton ID
  *
  * Returns:
  *	int		1 (one) if the clockvars have been read
- * 			- OR - 
+ * 			- OR -
  *			0 (zero) if an error occured and the variable set
  *			could not be read
  ****************************************************************************/
