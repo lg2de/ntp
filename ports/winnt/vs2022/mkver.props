@@ -13,6 +13,11 @@
 			<Command>call ..\..\scripts\mkver.bat -G scm-rev</Command>
 			<Outputs>scm-rev</Outputs>
 		</CustomBuild>
+		<CustomBuild Include="..\..\..\..\.gitignore" Condition="exists('..\..\..\..\.git') or exists('..\..\..\..\.git\index')">
+			<Message>Generating scm-rev from git...</Message>
+			<Command>call ..\..\scripts\mkver.bat -G scm-rev</Command>
+			<Outputs>scm-rev</Outputs>
+		</CustomBuild>
 	</ItemGroup>
 	<ItemGroup>
 		<CustomBuild Include="scm-rev">
